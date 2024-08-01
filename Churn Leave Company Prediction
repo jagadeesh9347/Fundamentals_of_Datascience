@@ -1,0 +1,56 @@
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn import metrics
+
+def main():
+    data = {
+        'usage_minutes': [300, 450, 500, 600, 800],
+        'contract_duration': [12, 24, 36, 48, 60],
+        'customer_age': [25, 30, 35, 40, 45],
+        'churn': [0, 1, 0, 1, 0]
+    }
+    
+    df = pd.DataFrame(data)
+    
+    X = df[['usage_minutes', 'contract_duration', 'customer_age']]
+    y = df['churn']
+
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    print(f"Model Accuracy: {accuracy:.2f}")
+
+    print("\nPlease enter the features of the new customer.")
+    
+    try:
+        usage_minutes = float(input("Enter the total usage minutes: "))
+        contract_duration = int(input("Enter the contract duration (in months): "))
+        customer_age = float(input("Enter the customer's age: "))
+    except ValueError:
+        print("Invalid input. Please enter numeric values.")
+        return
+
+    new_customer = np.array([[usage_minutes, contract_duration, customer_age]])
+    new_customer_scaled = scaler.transform(new_customer)
+    
+    churn_probability = model.predict_proba(new_customer_scaled)[0][1]
+    churn_prediction = model.predict(new_customer_scaled)[0]
+
+    print(f"\nThe probability that the new customer will churn is: {churn_probability:.2f}")
+    if churn_prediction == 1:
+        print("The model predicts that the new customer will churn.")
+    else:
+        print("The model predicts that the new customer will not churn.")
+
+if __name__ == "__main__":
+    main()
