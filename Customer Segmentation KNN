@@ -1,0 +1,49 @@
+import numpy as np
+import pandas as pd
+from sklearn.cluster import KMeans
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+
+def main():
+    data = {
+        'spending_score': [50, 60, 70, 80, 90],
+        'annual_income': [40000, 50000, 60000, 70000, 80000],
+        'age': [25, 35, 45, 55, 65]
+    }
+    
+    df = pd.DataFrame(data)
+    
+    X = df[['spending_score', 'annual_income', 'age']]
+    
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+
+    num_clusters = 3  
+    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+    kmeans.fit(X_scaled)
+
+    print("Cluster centers:\n", kmeans.cluster_centers_)
+
+    print("\nPlease enter the features of the new customer.")
+    
+    try:
+        spending_score = float(input("Enter the spending score (0-100): "))
+        annual_income = float(input("Enter the annual income (in USD): "))
+        age = float(input("Enter the customer's age: "))
+    except ValueError:
+        print("Invalid input. Please enter numeric values.")
+        return
+
+    new_customer = np.array([[spending_score, annual_income, age]])
+    new_customer_scaled = scaler.transform(new_customer)
+    
+    cluster_assignment = kmeans.predict(new_customer_scaled)[0]
+
+    print(f"\nThe new customer is assigned to cluster {cluster_assignment}.")
+    
+    print("\nCluster centers:")
+    for i, center in enumerate(kmeans.cluster_centers_):
+        print(f"Cluster {i}: Spending Score = {center[0]:.2f}, Annual Income = {center[1]:.2f}, Age = {center[2]:.2f}")
+
+if __name__ == "__main__":
+    main()
