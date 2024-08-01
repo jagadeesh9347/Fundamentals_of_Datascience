@@ -1,0 +1,15 @@
+import pandas as pd
+
+data = {
+    'WEATHER_CONDITION': ['Sunny', 'Rainy', 'Cloudy', 'Snowy', 'Windy'],
+    'OCCURRENCES': [100, 80, 90, 20, 30]
+}
+
+df = pd.DataFrame(data)
+
+frequency_distribution = df.set_index('WEATHER_CONDITION')['OCCURRENCES']
+
+most_common_weather = frequency_distribution.idxmax()
+most_common_weather_occurrences = frequency_distribution.max()
+
+print(f"The most common weather condition is {most_common_weather} with {most_common_weather_occurrences} occurrences.")
