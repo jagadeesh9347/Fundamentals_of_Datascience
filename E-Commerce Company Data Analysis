@@ -1,0 +1,30 @@
+import pandas as pd
+import random
+data = []
+for i in range(1, 101): 
+    customer_id = random.randint(1, 20) 
+    product_id = random.randint(1, 50)
+    quantity = random.randint(1, 5)
+    total_price = quantity * random.uniform(10, 100) 
+    data.append({'OrderID': i, 'CustomerID': customer_id, 'ProductID': product_id, 'Quantity': quantity, 'TotalPrice': total_price})
+
+df = pd.DataFrame(data)
+
+print(df.head())
+
+total_orders = df.shape[0]
+print(f"Total number of orders: {total_orders}")
+
+most_popular = df['ProductID'].value_counts().nlargest(5)
+print(f"\nMost frequent products (Top 5):\n{most_popular}")
+
+orders_per_customer = df.groupby('CustomerID')['OrderID'].count()
+print(f"\nOrders per customer (Sample 5):\n{orders_per_customer.head()}")
+
+avg_order_value = df['TotalPrice'].mean()
+total_revenue = df['TotalPrice'].sum()
+print(f"\nAverage order value: ${avg_order_value:.2f}")
+print(f"Total revenue: ${total_revenue:.2f}")
+
+customer_cltv = df.groupby('CustomerID')['TotalPrice'].sum()
+print(f"\nTop 3 customers by CLTV:\n{customer_cltv.nlargest(3)}")
