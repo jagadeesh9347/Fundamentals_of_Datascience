@@ -1,0 +1,32 @@
+
+import numpy as np
+import pandas as pd
+from scipy.stats import ttest_ind
+
+def main():
+    np.random.seed(42)  
+    design_A_conversion_rates = np.random.beta(a=2, b=5, size=100)
+    design_B_conversion_rates = np.random.beta(a=3, b=4, size=100)  
+    
+    design_A = pd.Series(design_A_conversion_rates, name='Design A')
+    design_B = pd.Series(design_B_conversion_rates, name='Design B')
+    
+    print("Basic Statistics:")
+    print(f"Design A - Mean: {design_A.mean():.4f}, Std Dev: {design_A.std():.4f}")
+    print(f"Design B - Mean: {design_B.mean():.4f}, Std Dev: {design_B.std():.4f}")
+    
+    t_stat, p_value = ttest_ind(design_A, design_B, equal_var=True) 
+    
+    
+    print("\nT-Test Results:")
+    print(f"T-Statistic: {t_stat:.4f}")
+    print(f"P-Value: {p_value:.4f}")
+    
+    alpha = 0.05
+    if p_value < alpha:
+        print("The difference in mean conversion rates is statistically significant.")
+    else:
+        print("The difference in mean conversion rates is not statistically significant.")
+
+if __name__ == "__main__":
+    main()
